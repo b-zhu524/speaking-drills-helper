@@ -22,7 +22,11 @@ def record_audio(confidence_level, i):
 
 
 if __name__ == "__main__":
-    i = 0
+    confidence = input("Enter confidence level (e.g., 'confident', 'not_confident'): ")
+    directory = f"data/raw/{confidence}"
+    file_count = len([name for name in os.listdir(directory) if os.path.isfile(os.path.join(directory, name))]) if os.path.exists(directory) else 0
+
+    i = file_count
     while True:
         record_audio('confident', i)
         time.sleep(0.25)

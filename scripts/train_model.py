@@ -16,7 +16,7 @@ def train_model():
     clf.fit(X_train, y_train)
 
     print("Model training completed.")
-    print(classification_report(y_test, clf.predict(X_test))))
+    print(classification_report(y_test, clf.predict(X_test)))
 
     with open("models/model.pkl", "wb") as f:
         pickle.dump(clf, f)
