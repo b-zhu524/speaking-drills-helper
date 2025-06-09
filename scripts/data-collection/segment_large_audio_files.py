@@ -25,6 +25,8 @@ def load_data():
     input_dir_unconfident = "data/raw-long-files/not_confident"
 
     for file in input_dir_confident:
+        convert_m4a_to_wav(file, file.replace(".m4a", ".wav"))
+
         if file.endswith(".wav"):
             input_file = os.path.join(input_dir_confident, file)
             segment_audio(input_file, 5000, "data/raw/confident")
@@ -32,6 +34,11 @@ def load_data():
         if file.endswith(".wav"):
             input_file = os.path.join(input_dir_unconfident, file)
             segment_audio(input_file, 5000, "data/raw/not_confident")
+
+
+def convert_m4a_to_wav(input_file, output_file):
+    audio = AudioSegment.from_file(input_file, format="m4a")
+    audio.export(output_file, format="wav")
 
 
 if __name__ == "__main__":
