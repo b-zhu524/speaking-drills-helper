@@ -45,12 +45,12 @@ def convert_all_files():
 
     for file in os.listdir(input_dir_confident):
         if file.endswith(".m4a"):
-            convert_m4a_to_wav(os.path.join(input_dir_confident, file), os.path.join("data/raw/confident", file.replace(".m4a", ".wav")))
+            convert_m4a_to_wav(os.path.join(input_dir_confident, file), os.path.join(input_dir_confident, file.replace(".m4a", ".wav")))
             os.remove(os.path.join(input_dir_confident, file))
     
     for file in os.listdir(input_dir_unconfident):
         if file.endswith(".m4a"):
-            convert_m4a_to_wav(os.path.join(input_dir_unconfident, file), os.path.join("data/raw/not_confident", file.replace(".m4a", ".wav")))
+            convert_m4a_to_wav(os.path.join(input_dir_unconfident, file), os.path.join(input_dir_unconfident, file.replace(".m4a", ".wav")))
             os.remove(os.path.join(input_dir_unconfident, file))
 
 
