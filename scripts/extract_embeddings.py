@@ -5,9 +5,9 @@ import os
 import numpy as np
 
 
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
 def get_embeddings(file_path):
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
     # Load the pre-trained Wav2Vec model
     processor = Wav2VecProcessor.from_pretrained("facebook/wav2vec2-base")
     model = Wav2VecModel.from_pretrained("facebook/wav2vec2-base").to(device)
