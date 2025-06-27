@@ -30,14 +30,20 @@ def create_dataset(raw_data_dir) -> Dataset:
     return dataset 
 
 
-"""
-Resamples the audio files & normalizes them using a feature extractor.
-"""
-def preprocess_data(dataset):
+def get_feature_extractor():
     model_id = "facebook/wav2vec2-base"
     feature_extractor = AutoFeatureExtractor.from_pretrained(
         model_id, do_normalize=True, return_attention_mask=True
     )
+
+    return feature_extractor
+
+
+"""
+Resamples the audio files & normalizes them using a feature extractor.
+"""
+def preprocess_data(dataset):
+    feature_extractor = get_feature_extractor()
 
     sampling_rate = feature_extractor.sampling_rate
     dataset = dataset.cast_column("audio", Audio(sampling_rate=sampling_rate))
@@ -54,6 +60,7 @@ def preprocess_data(dataset):
                                    return_attention_mask=True
                                    )
         return inputs
+    
     
     dataset_encoded = dataset.map(
         preprocess_fn,

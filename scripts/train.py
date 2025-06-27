@@ -1,21 +1,84 @@
-from transformers import AutoFeatureExtractor, Trainer, TrainingArguments
+from transformers import Trainer, TrainingArguments
 import numpy as np
+import evaluate
 from datasets import Audio
+from transformers import AutoModelForAudioClassification 
 
 
-def preprocess_data(dataset):
-    model_id = "facebook/wav2vec2-base"
-    feature_extractor = AutoFeatureExtractor.from_pretrained(
-        model_id, do_normalize=True, return_attention_mask=True
+def get_label2id():
+    return {
+        "clear": 0,
+        "unclear": 1
+    } 
+
+
+def get_id2label():
+    return {
+        0: "clear",
+        1: "unclear"
+    }
+
+
+def get_model(model_id, num_labels, label2id, id2label):
+    model = AutoModelForAudioClassification.from_pretrained(
+        model_id,
+        num_labels=num_labels,
+        id2label=id2label,
+        label2id=label2id,
     )
 
-    sampling_rate = feature_extractor.sampling_rate
-    dataset = dataset.cast_column("audio", Audio(sampling_rate=sampling_rate))
-
-    return dataset
+    return model
 
 
+
+# TODO
+def get_training_args(model_id):
+    model_name = model_id.split("/")[-1]
+    batch_size = 32  # adjust based on your GPU memory 
+    gradient_accumulation_steps = 1  # adjust based on your GPU memory
+    num_train_epochs = 50
+
+    training_args = TrainingArguments(
+        output_dir=f"./models/{model_name}",
+        evaluation_strategy="epoch",
+        save_strategy="epoch",
+        learning_rate=5e-5,
+        per_device_train_batch_size=batch_size,
+        gradient_accumulation_steps=gradient_accumulation_steps,
+        per_device_eval_batch_size=batch_size,
+        num_train_epochs=num_train_epochs,
+        warmup_ratio=0.1,
+        logging_steps=5,
+        load_best_model_at_end=True,
+        metric_for_best_model="accuracy",
+        fp16=True,
+        push_to_hub=True,
+    )
+
+    return training_args
+
+
+'''
+computes accuray on a batch of predictiosn
+'''
+def compute_metrics(eval_pred):
+    metric = evaluate.load("accuracy")
+    predictions = np.argmax(eval_pred.predictions, axis=1)
+    return metric.compute(predictions=predictions, references=eval_pred.label_ids)
+
+
+def train_model(model, training_args, train_dataset, eval_dataset, feature_extractor):
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=train_dataset,    # training dataset
+        eval_dataset=eval_dataset,  # test dataset 
+        tokenizer=feature_extractor,
+        compute_metrics=compute_metrics,
+    )
+
+    trainer.train(resume_from_checkpoint=True)
 
 
 if __name__ == "__main__":
-    preprocess_data()
+    pass
