@@ -27,6 +27,12 @@ def load_audio_files():
     dataset.save_to_disk("data/processed")
 
 
+def split_dataset(dataset):
+    dataset = dataset.train_test_split(seed=42, shuffle=True, test_size=0.1) 
+    print(dataset)
+    return dataset
+
+
 if __name__ == "__main__":
     load_audio_files()
     print("Dataset created and saved to 'data/processed'")

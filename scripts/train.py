@@ -1,12 +1,10 @@
-from datasets import load_dataset
+from transformers import AutofeatureExtractor, Trainer, TrainingArguments
 
 
-def split_dataset(dataset):
-    dataset = dataset.train_test_split(seed=42, shuffle=True, test_size=0.1) 
-    print(dataset)
-    return dataset
+def preprocess_data(dataset):
+    model_id = "facebook/wav2vec2-base"
+    feature_extractor = AutofeatureExtractor.from_pretrained(
+        model_id, do_normalize=True, return_attention_mask=True
+    )
 
-
-
-if __name__ == "__main__":
-    pass
+    

@@ -21,17 +21,17 @@ def segment_audio(input_file, segment_length_ms, output_dir):    # Load the audi
 
 
 def load_data():
-    input_dir_confident = "data/raw-long-files/confident"
-    input_dir_unconfident = "data/raw-long-files/not_confident"
+    input_dir_clear = "data/raw-long-files/clear"
+    input_dir_unclear = "data/raw-long-files/unclear"
 
-    for file in os.listdir(input_dir_confident):
+    for file in os.listdir(input_dir_clear):
         if file.endswith(".wav"):
-            input_file = os.path.join(input_dir_confident, file)
-            segment_audio(input_file, 5000, "data/raw/confident")
-    for file in os.listdir(input_dir_unconfident):
+            input_file = os.path.join(input_dir_clear, file)
+            segment_audio(input_file, 5000, "data/raw/clear-raw")
+    for file in os.listdir(input_dir_unclear):
         if file.endswith(".wav"):
-            input_file = os.path.join(input_dir_unconfident, file)
-            segment_audio(input_file, 5000, "data/raw/not_confident")
+            input_file = os.path.join(input_dir_unclear, file)
+            segment_audio(input_file, 5000, "data/raw/unclear-raw")
 
 
 def convert_m4a_to_wav(input_file, output_file):
@@ -40,18 +40,18 @@ def convert_m4a_to_wav(input_file, output_file):
 
 
 def convert_all_files():
-    input_dir_confident = "data/raw-long-files/confident"
-    input_dir_unconfident = "data/raw-long-files/not_confident"
+    input_dir_clear = "data/raw-long-files/clear"
+    input_dir_unclear = "data/raw-long-files/unclear"
 
-    for file in os.listdir(input_dir_confident):
+    for file in os.listdir(input_dir_clear):
         if file.endswith(".m4a"):
-            convert_m4a_to_wav(os.path.join(input_dir_confident, file), os.path.join(input_dir_confident, file.replace(".m4a", ".wav")))
-            os.remove(os.path.join(input_dir_confident, file))
+            convert_m4a_to_wav(os.path.join(input_dir_clear, file), os.path.join(input_dir_clear, file.replace(".m4a", ".wav")))
+            os.remove(os.path.join(input_dir_clear, file))
     
-    for file in os.listdir(input_dir_unconfident):
+    for file in os.listdir(input_dir_unclear):
         if file.endswith(".m4a"):
-            convert_m4a_to_wav(os.path.join(input_dir_unconfident, file), os.path.join(input_dir_unconfident, file.replace(".m4a", ".wav")))
-            os.remove(os.path.join(input_dir_unconfident, file))
+            convert_m4a_to_wav(os.path.join(input_dir_unclear, file), os.path.join(input_dir_unclear, file.replace(".m4a", ".wav")))
+            os.remove(os.path.join(input_dir_unclear, file))
 
 
 if __name__ == "__main__":
