@@ -59,6 +59,10 @@ def preprocess_data(dataset):
                                    truncation=True,
                                    return_attention_mask=True
                                    )
+        
+        # preserve labels
+        inputs["label"] = batch["label"]
+        
         return inputs
     
     

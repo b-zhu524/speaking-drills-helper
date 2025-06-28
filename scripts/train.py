@@ -9,7 +9,7 @@ def get_label2id():
     return {
         "clear": 0,
         "unclear": 1
-    } 
+    }
 
 
 def get_id2label():
@@ -77,7 +77,7 @@ def train_model(model, training_args, train_dataset, eval_dataset, feature_extra
         compute_metrics=compute_metrics,
     )
 
-    trainer.train(resume_from_checkpoint=True)
+    trainer.train()
 
 
 if __name__ == "__main__":
