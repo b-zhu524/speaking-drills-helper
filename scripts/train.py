@@ -31,7 +31,6 @@ def get_model(model_id, num_labels, label2id, id2label):
 
 
 
-# TODO
 def get_training_args(model_id):
     model_name = model_id.split("/")[-1]
     batch_size = 32  # adjust based on your GPU memory 
@@ -59,7 +58,7 @@ def get_training_args(model_id):
 
 
 '''
-computes accuray on a batch of predictiosn
+computes accuray on a batch of predictions 
 '''
 def compute_metrics(eval_pred):
     metric = evaluate.load("accuracy")
