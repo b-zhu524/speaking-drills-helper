@@ -4,4 +4,3 @@ evaluate
 torchaudio
 numpy
 torch
-evaluate
