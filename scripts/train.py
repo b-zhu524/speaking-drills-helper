@@ -78,10 +78,14 @@ def train_model(model, training_args, train_dataset, eval_dataset, feature_extra
 
     trainer.train()
 
+    return trainer
+
 
 def evaluate_model(trainer):
     metrics = trainer.evaluate()
-    print("Evaluation metrics:", metrics)
+    print("\n=== Evaluation Metrics ===")
+    for k, v in metrics.items():
+        print(f"{k}: {v:.4f}")
     return metrics
 
 

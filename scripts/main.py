@@ -14,11 +14,11 @@ if __name__ == "__main__":
     label2id = train.get_label2id()
 
     model = train.get_model(model_id, len(dataset.features["label"].names), id2label, label2id)
-    train.train_model(model, training_args, train_dataset, eval_dataset, feature_extractor)
+    trainer = train.train_model(model, training_args, train_dataset, eval_dataset, feature_extractor)
     print("Training complete. Model saved at:", training_args.output_dir)
 
     # evaluate
-    train.evaluate_model(model, eval_dataset)
+    train.evaluate_model(trainer)
     print("Evaluation complete.")
 
 
