@@ -8,7 +8,7 @@ import numpy as np
 """
 Create a dataset from audio files in a specified directory.
 """
-def create_dataset(raw_data_dir) -> Dataset:
+def create_dataset(raw_data_dir, model_id="facebook/wav2vec2-base-960h") -> Dataset:
     data = {"file": [], "label": [], "audio": []}
 
     # add data
@@ -22,7 +22,7 @@ def create_dataset(raw_data_dir) -> Dataset:
                 data["label"].append(0 if label == "clear-raw" else 1) # 0 for clear, 1 for unclear
 
     # decode .wav files into arrays
-    dataset = preprocess_data(dataset=Dataset.from_dict(data))
+    dataset = preprocess_data(dataset=Dataset.from_dict(data), model_id=model_id)
 
     dataset = dataset.shuffle(seed=42)
     dataset = split_dataset(dataset)
@@ -30,8 +30,7 @@ def create_dataset(raw_data_dir) -> Dataset:
     return dataset 
 
 
-def get_feature_extractor():
-    model_id = "facebook/wav2vec2-base"
+def get_feature_extractor(model_id):
     feature_extractor = AutoFeatureExtractor.from_pretrained(
         model_id, do_normalize=True, return_attention_mask=True
     )
@@ -42,8 +41,8 @@ def get_feature_extractor():
 """
 Resamples the audio files & normalizes them using a feature extractor.
 """
-def preprocess_data(dataset):
-    feature_extractor = get_feature_extractor()
+def preprocess_data(dataset, model_id):
+    feature_extractor = get_feature_extractor(model_id)
 
     sampling_rate = feature_extractor.sampling_rate
     dataset = dataset.cast_column("audio", Audio(sampling_rate=sampling_rate))
@@ -95,5 +94,4 @@ def check_if_normalized(dataset):
 
 
 if __name__ == "__main__":
-    dataset = create_dataset("data/raw/")
-    check_if_normalized(dataset)
+    pass

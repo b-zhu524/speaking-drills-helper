@@ -79,5 +79,11 @@ def train_model(model, training_args, train_dataset, eval_dataset, feature_extra
     trainer.train()
 
 
+def evaluate_model(trainer):
+    metrics = trainer.evaluate()
+    print("Evaluation metrics:", metrics)
+    return metrics
+
+
 if __name__ == "__main__":
     pass
