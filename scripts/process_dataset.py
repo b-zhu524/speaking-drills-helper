@@ -1,7 +1,7 @@
 import os
 import torch
 import torchaudio
-from datasets import Dataset, load_dataset, Audio
+from datasets import Dataset, load_dataset, Audio, DatasetDict
 from transformers import AutoFeatureExtractor
 import numpy as np
 
@@ -85,6 +85,26 @@ def load_audio_files():
 def split_dataset(dataset):
     dataset = dataset.train_test_split(seed=42, shuffle=True, test_size=0.1) 
     return dataset
+
+
+def three_way_split_dataset(dataset, test_size=0.1, val_size=0.1):
+    """Splits the dataset into train, validation, and test sets."""
+    # Split off the test set first
+    initial_split = dataset.train_test_split(test_size=0.1, seed=42)
+    train_val = initial_split["train"]
+    test = initial_split["test"]
+
+    # Split train_val into train and validation sets
+    val_fraction = val_size / (1 - test_size)  # Adjusted for the remaining data
+    val_split = train_val.train_test_split(test_size=val_fraction, seed=42)
+    train = val_split["train"]
+    validation = val_split["test"]
+
+    return DatasetDict({
+        "train": train,
+        "validation": validation,
+        "test": test
+    })
 
 
 def check_if_normalized(dataset):

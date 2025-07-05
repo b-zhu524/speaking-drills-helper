@@ -13,7 +13,7 @@ if __name__ == "__main__":
     id2label = train.get_id2label()
     label2id = train.get_label2id()
 
-    model = train.get_model(model_id, len(dataset.features["label"].names), id2label, label2id)
+    model = train.get_model(model_id, len(dataset.features["label"].names), label2id, id2label)
     trainer = train.train_model(model, training_args, train_dataset, eval_dataset, feature_extractor)
     print("Training complete. Model saved at:", training_args.output_dir)
 

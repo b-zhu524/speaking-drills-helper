@@ -39,7 +39,7 @@ def get_training_args(model_id):
 
     training_args = TrainingArguments(
         output_dir=f"./models/{model_name}",
-        evaluation_strategy="epoch",
+        eval_strategy="epoch",
         save_strategy="epoch",
         learning_rate=5e-5,
         per_device_train_batch_size=batch_size,
