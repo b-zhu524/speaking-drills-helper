@@ -51,7 +51,8 @@ def get_training_args(model_id):
         load_best_model_at_end=True,
         metric_for_best_model="accuracy",
         fp16=True,
-        push_to_hub=True,
+        # disable push to hub for now
+        push_to_hub=False,
     )
 
     return training_args
