@@ -25,7 +25,7 @@ def create_dataset(raw_data_dir, model_id="facebook/wav2vec2-base-960h") -> Data
     dataset = preprocess_data(dataset=Dataset.from_dict(data), model_id=model_id)
 
     dataset = dataset.shuffle(seed=42)
-    dataset = split_dataset(dataset)
+    dataset = three_way_split_dataset(dataset)
 
     return dataset 
 
@@ -80,11 +80,6 @@ def preprocess_data(dataset, model_id):
 def load_audio_files():
     dataset = create_dataset("data/raw/")
     dataset.save_to_disk("data/processed")
-
-
-def split_dataset(dataset):
-    dataset = dataset.train_test_split(seed=42, shuffle=True, test_size=0.1) 
-    return dataset
 
 
 def three_way_split_dataset(dataset, test_size=0.1, val_size=0.1):

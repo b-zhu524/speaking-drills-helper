@@ -8,12 +8,16 @@ if __name__ == "__main__":
 
     # train model
     training_args = train.get_training_args(model_id)
-    train_dataset, eval_dataset = process_dataset.split_dataset(dataset)
+    train_dataset = dataset["train"]
+    eval_dataset = dataset["validation"]
+    test_dataset = dataset["test"]
+
     feature_extractor = process_dataset.get_feature_extractor(model_id)
     id2label = train.get_id2label()
     label2id = train.get_label2id()
 
-    model = train.get_model(model_id, len(dataset.features["label"].names), label2id, id2label)
+    num_labels = len(set(dataset["train"]["label"]))
+    model = train.get_model(model_id, num_labels, label2id, id2label)
     trainer = train.train_model(model, training_args, train_dataset, eval_dataset, feature_extractor)
     print("Training complete. Model saved at:", training_args.output_dir)
 
