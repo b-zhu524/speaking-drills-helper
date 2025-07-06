@@ -68,14 +68,7 @@ def compute_metrics(eval_pred):
 
 
 def train_model(model, training_args, train_dataset, eval_dataset, feature_extractor):
-    # debugging
-    print("Training args:", training_args)
-
-    print("Sample from train dataset:")
-    print(train_dataset[0])
-
-    print("Sample audio shape:", train_dataset[0]['audio']['array'].shape)
-    print("Sample label:", train_dataset[0]['label'])
+    print(f"First value: {train_dataset[0]}")
 
     data_collator = DataCollatorWithPadding(feature_extractor)
 
