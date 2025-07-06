@@ -81,10 +81,6 @@ def train_model(model, training_args, train_dataset, eval_dataset, feature_extra
         compute_metrics=compute_metrics,
     )
 
-    # Check learning rate before training
-    for i, param_group in enumerate(trainer.optimizer.param_groups):
-        print(f"Initial learning rate for param group {i}: {param_group['lr']}")
-
     # Start training
     print("Starting training...")
     trainer.train()
