@@ -1,4 +1,4 @@
-from transformers import Trainer, TrainingArguments
+from transformers import Trainer, TrainingArguments, DataCollatorWithPadding 
 import numpy as np
 import evaluate
 from datasets import Audio
@@ -68,15 +68,32 @@ def compute_metrics(eval_pred):
 
 
 def train_model(model, training_args, train_dataset, eval_dataset, feature_extractor):
+    # debugging
+    print("Training args:", training_args)
+
+    print("Sample from train dataset:")
+    print(train_dataset[0])
+
+    print("Sample audio shape:", train_dataset[0]['audio']['array'].shape)
+    print("Sample label:", train_dataset[0]['label'])
+
+    data_collator = DataCollatorWithPadding(feature_extractor)
+
     trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,    # training dataset
         eval_dataset=eval_dataset,  # test dataset 
-        tokenizer=feature_extractor,
+        data_collator=data_collator,
         compute_metrics=compute_metrics,
     )
 
+    # Check learning rate before training
+    for i, param_group in enumerate(trainer.optimizer.param_groups):
+        print(f"Initial learning rate for param group {i}: {param_group['lr']}")
+
+    # Start training
+    print("Starting training...")
     trainer.train()
 
     return trainer
