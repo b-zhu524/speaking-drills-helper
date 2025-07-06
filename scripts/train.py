@@ -33,8 +33,8 @@ def get_model(model_id, num_labels, label2id, id2label):
 
 def get_training_args(model_id):
     model_name = model_id.split("/")[-1]
-    batch_size = 32  # adjust based on your GPU memory 
-    gradient_accumulation_steps = 1  # adjust based on your GPU memory
+    batch_size = 16  # adjust based on your GPU memory 
+    gradient_accumulation_steps = 1
     num_train_epochs = 50
 
     training_args = TrainingArguments(

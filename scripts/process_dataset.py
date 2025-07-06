@@ -69,7 +69,7 @@ def preprocess_data(dataset, model_id):
         preprocess_fn,
         remove_columns=["audio", "file"],   # remove audio and file paths - only need encoded columns
         batched=True,
-        batch_size=50,
+        batch_size=100,
         num_proc=1,  # Adjust based on your CPU cores
         )
 
