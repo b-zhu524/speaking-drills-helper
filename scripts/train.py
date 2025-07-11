@@ -68,8 +68,6 @@ def compute_metrics(eval_pred):
 
 
 def train_model(model, training_args, train_dataset, eval_dataset, feature_extractor):
-    print(f"First value: {train_dataset[0]}")
-
     data_collator = DataCollatorWithPadding(feature_extractor)
 
     trainer = Trainer(
