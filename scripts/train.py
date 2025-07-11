@@ -70,6 +70,12 @@ def compute_metrics(eval_pred):
 def train_model(model, training_args, train_dataset, eval_dataset, feature_extractor):
     data_collator = DataCollatorWithPadding(feature_extractor)
 
+    sample = train_dataset[0]
+    print("input_values type:", type(sample["input_values"]))
+    print("input_values shape:", np.shape(sample["input_values"]))
+    print("min/max:", np.min(sample["input_values"]), np.max(sample["input_values"]))
+
+
     trainer = Trainer(
         model=model,
         args=training_args,

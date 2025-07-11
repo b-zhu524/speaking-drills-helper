@@ -32,7 +32,7 @@ def create_dataset(raw_data_dir, model_id="facebook/wav2vec2-base-960h") -> Data
 
 def get_feature_extractor(model_id):
     feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(
-        do_normalize=True, return_attention_mask=True
+        model_id, do_normalize=True, return_attention_mask=True
     )
 
     return feature_extractor
