@@ -2,7 +2,7 @@ import os
 import torch
 import torchaudio
 from datasets import Dataset, load_dataset, Audio, DatasetDict
-from transformers import AutoFeatureExtractor
+from transformers import AutoFeatureExtractor, Wav2Vec2FeatureExtractor
 import numpy as np
 
 """
@@ -31,8 +31,8 @@ def create_dataset(raw_data_dir, model_id="facebook/wav2vec2-base-960h") -> Data
 
 
 def get_feature_extractor(model_id):
-    feature_extractor = AutoFeatureExtractor.from_pretrained(
-        model_id, do_normalize=True, return_attention_mask=True
+    feature_extractor = Wav2Vec2FeatureExtractor.from_pretrained(
+        do_normalize=True, return_attention_mask=True
     )
 
     return feature_extractor
@@ -50,11 +50,12 @@ def preprocess_data(dataset, model_id):
 
     def preprocess_fn(batch):
         audio_arrays = [x["array"] for x in batch["audio"]]
+        max_duration = 5  # 5 seconds, truncate longer audio files
 
         # apply feature extractor (returns input_values, attention_mask)
         inputs = feature_extractor(audio_arrays,
                                    sampling_rate=sampling_rate,
-                                   max_length=int(feature_extractor.sampling_rate * 5),
+                                   max_length=int(feature_extractor.sampling_rate * max_duration),
                                    truncation=True,
                                    return_attention_mask=True
                                    )
@@ -72,6 +73,8 @@ def preprocess_data(dataset, model_id):
         batch_size=100,
         num_proc=1,  # Adjust based on your CPU cores
         )
+    
+    print(f"Keys: {dataset_encoded.column_names}")
 
     return dataset_encoded
 
