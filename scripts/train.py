@@ -50,7 +50,8 @@ def get_training_args(model_id):
         logging_steps=5,
         load_best_model_at_end=True,
         metric_for_best_model="accuracy",
-        fp16=True,
+        # fp16=True,
+        fp16=False, # disabled for testing
         # disable push to hub for now
         push_to_hub=False,
     )

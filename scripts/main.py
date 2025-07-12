@@ -1,5 +1,6 @@
 import train, process_dataset
 from transformers import Trainer
+import numpy as np
 
 
 if __name__ == "__main__":
@@ -31,6 +32,12 @@ if __name__ == "__main__":
         compute_metrics=train.compute_metrics,
         data_collator=train.DataCollatorWithPadding(feature_extractor),
     )
+
+    # check inputs 
+    sample = train_dataset[0]
+    print("input_values shape:", np.shape(sample["input_values"]))
+    print("input_values mean/var:", np.mean(sample["input_values"]), np.var(sample["input_values"]))
+
     print("starting sanity check")
     trainer.train()
     print("sanity check done")
