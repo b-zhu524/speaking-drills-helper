@@ -1,4 +1,6 @@
 import train, process_dataset
+from transformers import Trainer
+
 
 if __name__ == "__main__":
     model_id = "facebook/wav2vec2-base-960h"
@@ -18,12 +20,26 @@ if __name__ == "__main__":
 
     num_labels = len(set(dataset["train"]["label"]))
     model = train.get_model(model_id, num_labels, label2id, id2label)
-    trainer = train.train_model(model, training_args, train_dataset, eval_dataset, feature_extractor)
-    print("Training complete. Model saved at:", training_args.output_dir)
 
-    # evaluate
-    train.evaluate_model(trainer)
-    print("Evaluation complete.")
+    # sanity check with a small dataset
+    small_train_dataset = train_dataset.shuffle(seed=42).select(range(10))
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        train_dataset=small_train_dataset,  # small dataset for sanity check
+        eval_dataset=small_train_dataset,
+        compute_metrics=train.compute_metrics,
+        data_collator=train.DataCollatorWithPadding(feature_extractor),
+    )
+
+
+    # # real training
+    # trainer = train.train_model(model, training_args, train_dataset, eval_dataset, feature_extractor)
+    # print("Training complete. Model saved at:", training_args.output_dir)
+
+    # # evaluate
+    # train.evaluate_model(trainer)
+    # print("Evaluation complete.")
 
 
 
