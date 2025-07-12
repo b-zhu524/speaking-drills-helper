@@ -31,6 +31,9 @@ if __name__ == "__main__":
         compute_metrics=train.compute_metrics,
         data_collator=train.DataCollatorWithPadding(feature_extractor),
     )
+    print("starting sanity check")
+    trainer.train()
+    print("sanity check done")
 
 
     # # real training
