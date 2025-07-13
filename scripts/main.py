@@ -33,10 +33,27 @@ if __name__ == "__main__":
         data_collator=train.DataCollatorWithPadding(feature_extractor),
     )
 
+
     # check inputs 
     sample = train_dataset[0]
     print("input_values shape:", np.shape(sample["input_values"]))
     print("input_values mean/var:", np.mean(sample["input_values"]), np.var(sample["input_values"]))
+
+    # forward pass manual
+    import torch
+
+    model.eval()
+    sample = train_dataset[0]
+    with torch.no_grad():
+        inputs = {
+            "input_values": torch.tensor([sample["input_values"]]),
+            "attention_mask": torch.tensor([sample["attention_mask"]]),
+        }
+        outputs = model(**inputs)
+        print("Logits:", outputs.logits)
+        print("Logits contain NaNs?", torch.isnan(outputs.logits).any())
+
+
 
     print("starting sanity check")
     trainer.train()
