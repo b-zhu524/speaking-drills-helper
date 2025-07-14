@@ -2,8 +2,8 @@ from transformers import Trainer, TrainingArguments, DataCollatorWithPadding
 import numpy as np
 import evaluate
 from datasets import Audio
-from transformers import AutoModelForAudioClassification 
-
+from transformers import AutoModelForAudioClassification, TrainerCallback
+import torch
 
 def get_label2id():
     return {
@@ -33,8 +33,8 @@ def get_model(model_id, num_labels, label2id, id2label):
 
 def get_training_args(model_id):
     model_name = model_id.split("/")[-1]
-    batch_size = 16  # adjust based on your GPU memory 
-    gradient_accumulation_steps = 1
+    batch_size = 4  # adjust based on your GPU memory 
+    gradient_accumulation_steps = 4
     num_train_epochs = 50
 
     training_args = TrainingArguments(
@@ -50,7 +50,7 @@ def get_training_args(model_id):
         logging_steps=5,
         load_best_model_at_end=True,
         metric_for_best_model="accuracy",
-        # fp16=True,
+        #fp16=True,
         fp16=False, # disabled for testing
         # disable push to hub for now
         push_to_hub=False,
@@ -67,8 +67,32 @@ def compute_metrics(eval_pred):
     predictions = np.argmax(eval_pred.predictions, axis=1)
     return metric.compute(predictions=predictions, references=eval_pred.label_ids)
 
+class DebuggerCallback(TrainerCallback):
+    """Debug Util"""
+    def on_step_begin(self, args, state, control, **kwargs):
+        optimizer = kwargs.get("optimizer")
+        if optimizer:
+            lr = optimizer.param_groups[0]["lr"]
+            print(f"Step {state.global_step} - Learning rate: {lr}")
+
+
+class DebugTrainer(Trainer):
+    def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
+        # Inspect the inputs and logits
+        outputs = model(**inputs)
+        logits = outputs.logits
+
+        if torch.isnan(logits).any() or torch.isinf(logits).any():
+            print("NaN or Inf in logit!")
+            print(logits)
+
+        loss = super().compute_loss(model, inputs, return_outputs)
+        return (loss, outputs) if return_outputs else loss
+
+
 
 def train_model(model, training_args, train_dataset, eval_dataset, feature_extractor):
+    torch.autograd.set_detect_anomaly(True)
     data_collator = DataCollatorWithPadding(feature_extractor)
 
     sample = train_dataset[0]
@@ -77,13 +101,14 @@ def train_model(model, training_args, train_dataset, eval_dataset, feature_extra
     print("min/max:", np.min(sample["input_values"]), np.max(sample["input_values"]))
 
 
-    trainer = Trainer(
+    trainer = DebugTrainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,    # training dataset
         eval_dataset=eval_dataset,  # test dataset 
         data_collator=data_collator,
         compute_metrics=compute_metrics,
+        callbacks=[DebuggerCallback()],
     )
 
     # Start training
