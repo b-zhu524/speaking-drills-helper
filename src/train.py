@@ -76,18 +76,18 @@ class DebuggerCallback(TrainerCallback):
             print(f"Step {state.global_step} - Learning rate: {lr}")
 
 
-class DebugTrainer(Trainer):
-    def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
-        # Inspect the inputs and logits
-        outputs = model(**inputs)
-        logits = outputs.logits
-
-        if torch.isnan(logits).any() or torch.isinf(logits).any():
-            print("NaN or Inf in logit!")
-            print(logits)
-
-        loss = super().compute_loss(model, inputs, return_outputs)
-        return (loss, outputs) if return_outputs else loss
+## class DebugTrainer(Trainer):
+##     def compute_loss(self, model, inputs, return_outputs=False, **kwargs):
+##         # Inspect the inputs and logits
+##         outputs = model(**inputs)
+##         logits = outputs.logits
+## 
+##         if torch.isnan(logits).any() or torch.isinf(logits).any():
+##             print("NaN or Inf in logit!")
+##             print(logits)
+## 
+##         loss = super().compute_loss(model, inputs, return_outputs)
+##         return (loss, outputs) if return_outputs else loss
 
 
 
@@ -101,7 +101,7 @@ def train_model(model, training_args, train_dataset, eval_dataset, feature_extra
     print("min/max:", np.min(sample["input_values"]), np.max(sample["input_values"]))
 
 
-    trainer = DebugTrainer(
+    trainer = Trainer(
         model=model,
         args=training_args,
         train_dataset=train_dataset,    # training dataset
