@@ -31,47 +31,7 @@ def train_model():
     num_labels = len(set(dataset["train"]["label"]))
     model = train.get_model(model_id, num_labels, label2id, id2label)
 
-    
-
-##    # sanity check with a small dataset
-##    small_train_dataset = train_dataset.shuffle(seed=42).select(range(10))
-##    trainer = Trainer(
-##        model=model,
-##        args=training_args,
-##        train_dataset=small_train_dataset,  # small dataset for sanity check
-##        eval_dataset=small_train_dataset,
-##        compute_metrics=train.compute_metrics,
-##        data_collator=train.DataCollatorWithPadding(feature_extractor),
-##    )
-##
-##
-##    # check inputs 
-##    sample = train_dataset[0]
-##    print("input_values shape:", np.shape(sample["input_values"]))
-##    print("input_values mean/var:", np.mean(sample["input_values"]), np.var(sample["input_values"]))
-
-##    # forward pass manual
-##    import torch
-##
-##    model.eval()
-##    sample = train_dataset[0]
-##    with torch.no_grad():
-##        inputs = {
-##            "input_values": torch.tensor([sample["input_values"]]),
-##            "attention_mask": torch.tensor([sample["attention_mask"]]),
-##        }
-##        outputs = model(**inputs)
-##        print("Logits:", outputs.logits)
-##        print("Logits contain NaNs?", torch.isnan(outputs.logits).any())
-##
-##
-##
-##    print("starting sanity check")
-##    trainer.train()
-##    print("sanity check done")
-##
-##
-    # real training
+    # train
     trainer = train.train_model(model, training_args, train_dataset, eval_dataset, feature_extractor)
     print("Training complete. Model saved at:", training_args.output_dir)
 

@@ -49,8 +49,8 @@ def get_training_args(model_id):
         warmup_ratio=0.1,
         logging_steps=5,
         load_best_model_at_end=True,
-        metric_for_best_model="accuracy",
-        #fp16=True,
+        metric_for_best_model="f1",   # changed froma accuracy to f1 becuase data is biased
+        greater_is_better=True, # f1 is better when higher
         fp16=False, # disabled for testing
         # disable push to hub for now
         push_to_hub=False,
@@ -63,9 +63,11 @@ def get_training_args(model_id):
 computes accuray on a batch of predictions 
 '''
 def compute_metrics(eval_pred):
-    metric = evaluate.load("accuracy")
+    metric = evaluate.load("f1")  # change from "accuracy" to "f1"
     predictions = np.argmax(eval_pred.predictions, axis=1)
-    return metric.compute(predictions=predictions, references=eval_pred.label_ids)
+    return metric.compute(predictions=predictions, references=eval_pred.label_ids, average="weighted")
+
+
 
 class DebuggerCallback(TrainerCallback):
     """Debug Util"""
