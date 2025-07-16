@@ -27,22 +27,21 @@ def forward_pass(model, inputs):
         print(predicted_label)
 
 
-def save_model(model, model_path):
-    model.save_pretrained(model_path)
+def save_model(model, processor, model_path):
+    model.save_pretrained(model_path, safe_serialization=False)
     processor.save_pretrained(model_path)
 
 
 if __name__ == "__main__":
-    model_path = "./models/wav2vec2-base-960h"
+    final_model_path = "./models/wav2vec2-base-960h-final"
     checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-700"
-
-    # model, processor = load_model(model_path)
-    model = Wav2Vec2ForSequenceClassification.from_pretrained(model_path)
-    processor = Wav2Vec2Processor.from_pretrained(model_path)
-
-    save_model(model, model_path)
-
     audio_path = "./data/test/example.wav"
+
+    model, processor = load_model(checkpoint_path)
+    save_model(model, processor, final_model_path)
+
+    model, processor = load_model(final_model_path)
+
     inputs = load_audio(audio_path, processor)
 
     forward_pass(model, inputs)
