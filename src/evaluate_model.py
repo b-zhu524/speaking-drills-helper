@@ -1,6 +1,7 @@
 import torch
 from transformers import Wav2Vec2ForSequenceClassification, Wav2Vec2Processor
 import torchaudio
+import os
 
 
 def load_model(model_path):
@@ -26,11 +27,16 @@ def forward_pass(model, inputs):
         print(predicted_label)
 
 
+def save_model(model, model_path):
+    model.save_pretrained("./models/wav2vec2-base-960h")
+    processor.save_pretrained("./models/wav2vec2-base-960h")
+
+
 if __name__ == "__main__":
-    model_path = "../models/wav2vec2-base-960h"
+    model_path = "./models/wav2vec2-base-960h"
     model, processor = load_model(model_path)
 
-    audio_path = "../data/test/example.wav"
+    audio_path = "./data/test/example.wav"
     inputs = load_audio(audio_path, processor)
 
     forward_pass(model, inputs)
