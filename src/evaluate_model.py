@@ -38,7 +38,7 @@ def save_model(model, processor, model_path):
 
 
 if __name__ == "__main__":
-    checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-700"
+    checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-686"
     final_model_path = "./models/wav2vec2-base-960h-final"
     audio_path = "./data/test/example.wav"
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     # save model and processor
     model.save_pretrained(final_model_path)
-    processor.save_pretrained(final_model_path, tokenizer=None)
+    processor.save_pretrained(final_model_path)
 
     loaded_model = Wav2Vec2ForCTC.from_pretrained(final_model_path)
     loaded_processor = Wav2Vec2Processor.from_pretrained(final_model_path)
