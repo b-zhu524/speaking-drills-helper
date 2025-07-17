@@ -1,3 +1,63 @@
+import torch
+from transformers import Wav2Vec2ForSequenceClassification, Wav2Vec2Processor
+import torchaudio
+
+
+def load_model_and_processor(model_path, processor_path=None):
+    model = Wav2Vec2ForSequenceClassification.from_pretrained(model_path)
+
+    # Load processor from saved path or from base model if not present
+    if processor_path:
+        processor = Wav2Vec2Processor.from_pretrained(processor_path)
+    else:
+        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")  # Adjust to match base model
+
+    model.eval()
+    return model, processor
+
+
+def load_audio(audio_path, processor):
+    waveform, sr = torchaudio.load(audio_path)
+    inputs = processor(waveform, sampling_rate=sr, return_tensors="pt", padding=True)
+    return inputs
+
+
+def forward_pass(model, inputs):
+    with torch.no_grad():
+        outputs = model(**inputs)
+        logits = outputs.logits
+        predicted_class_id = logits.argmax(dim=-1).item()
+        predicted_label = model.config.id2label[predicted_class_id]
+        print(f"Predicted label: {predicted_label}")
+
+
+def save_model(model, processor, model_path):
+    model.save_pretrained(model_path, safe_serialization=False)
+    processor.save_pretrained(model_path)
+
+
+if __name__ == "__main__":
+    checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-700"
+    final_model_path = "./models/wav2vec2-base-960h-final"
+    audio_path = "./data/test/example.wav"
+
+    # Load model from checkpoint and processor from base model
+    model, processor = load_model_and_processor(checkpoint_path)
+
+    # Save both into final model directory
+    save_model(model, processor, final_model_path)
+
+    # Reload model and processor from final directory
+    model, processor = load_model_and_processor(final_model_path, final_model_path)
+
+    # Load and preprocess audio
+    inputs = load_audio(audio_path, processor)
+
+    # Run prediction
+    forward_pass(model, inputs)
+    print("Manual model evaluation complete.")
+
+
 # import torch
 # from transformers import Wav2Vec2ForSequenceClassification, Wav2Vec2Processor
 # import torchaudio
@@ -46,63 +106,3 @@
 
 #     forward_pass(model, inputs)
 #     print("Manual model evaluation complete.")
-
-import torch
-from transformers import Wav2Vec2ForSequenceClassification, Wav2Vec2Processor
-import torchaudio
-import os
-
-
-def load_model_and_processor(model_path, processor_path=None):
-    model = Wav2Vec2ForSequenceClassification.from_pretrained(model_path)
-
-    # Load processor from saved path or from base model if not present
-    if processor_path:
-        processor = Wav2Vec2Processor.from_pretrained(processor_path)
-    else:
-        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base")  # Adjust to match base model
-
-    model.eval()
-    return model, processor
-
-
-def load_audio(audio_path, processor):
-    waveform, sr = torchaudio.load(audio_path)
-    inputs = processor(waveform, sampling_rate=sr, return_tensors="pt", padding=True)
-    return inputs
-
-
-def forward_pass(model, inputs):
-    with torch.no_grad():
-        outputs = model(**inputs)
-        logits = outputs.logits
-        predicted_class_id = logits.argmax(dim=-1).item()
-        predicted_label = model.config.id2label[predicted_class_id]
-        print(f"Predicted label: {predicted_label}")
-
-
-def save_model(model, processor, model_path):
-    model.save_pretrained(model_path, safe_serialization=False)
-    processor.save_pretrained(model_path)
-
-
-if __name__ == "__main__":
-    checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-700"
-    final_model_path = "./models/wav2vec2-base-960h-final"
-    audio_path = "./data/test/example.wav"
-
-    # Load model from checkpoint and processor from base model
-    model, processor = load_model_and_processor(checkpoint_path)
-
-    # Save both into final model directory
-    save_model(model, processor, final_model_path)
-
-    # Reload model and processor from final directory
-    model, processor = load_model_and_processor(final_model_path, final_model_path)
-
-    # Load and preprocess audio
-    inputs = load_audio(audio_path, processor)
-
-    # Run prediction
-    forward_pass(model, inputs)
-    print("Manual model evaluation complete.")
