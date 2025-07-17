@@ -48,7 +48,7 @@ if __name__ == "__main__":
 
     # save model and processor
     model.save_pretrained(final_model_path)
-    processor.save_pretrained(final_model_path)
+    processor.save_pretrained(final_model_path, tokenizer=None)
 
     loaded_model = Wav2Vec2ForSequenceClassification.from_pretrained(final_model_path)
     loaded_processor = Wav2Vec2Processor.from_pretrained(final_model_path)
