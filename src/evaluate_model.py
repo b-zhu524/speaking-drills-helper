@@ -1,5 +1,5 @@
 import torch
-from transformers import Wav2Vec2ForSequenceClassification, Wav2Vec2Processor
+from transformers import Wav2Vec2ForSequenceClassification, Wav2Vec2ForCTC, Wav2Vec2Processor
 from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification
 import torchaudio
 
@@ -43,14 +43,14 @@ if __name__ == "__main__":
     audio_path = "./data/test/example.wav"
 
     # instantiate model and processor
-    model = Wav2Vec2ForSequenceClassification.from_pretrained(checkpoint_path)
+    model = Wav2Vec2ForCTC.from_pretrained(checkpoint_path)
     processor = Wav2Vec2Processor.from_pretrained(checkpoint_path)
 
     # save model and processor
     model.save_pretrained(final_model_path)
     processor.save_pretrained(final_model_path, tokenizer=None)
 
-    loaded_model = Wav2Vec2ForSequenceClassification.from_pretrained(final_model_path)
+    loaded_model = Wav2Vec2ForCTC.from_pretrained(final_model_path)
     loaded_processor = Wav2Vec2Processor.from_pretrained(final_model_path)
 
     inputs = load_audio(audio_path, loaded_processor)
