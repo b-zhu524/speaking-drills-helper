@@ -1,7 +1,8 @@
 import torch
 from transformers import Wav2Vec2ForSequenceClassification, Wav2Vec2ForCTC, Wav2Vec2Processor
-from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification
+from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForAudioClassification
 import torchaudio
+from transformers import pipeline, AutoFeatureExtractor
 
 
 def load_model_and_processor(model_path, processor_path=None):
@@ -40,21 +41,31 @@ def save_model(model, processor, model_path):
 if __name__ == "__main__":
     checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-686"
     final_model_path = "./models/wav2vec2-base-960h-final"
-    audio_path = "./data/test/example.wav"
+    audio_path = "./data/test/segment_7.wav"
 
-    # instantiate model and processor
-    model = Wav2Vec2ForCTC.from_pretrained(checkpoint_path)
-    processor = Wav2Vec2Processor.from_pretrained(checkpoint_path)
+    model = AutoModelForAudioClassification.from_pretrained(final_model_path)
+    processor = Wav2Vec2Processor.from_pretrained(final_model_path)
 
-    # save model and processor
-    model.save_pretrained(final_model_path)
-    processor.save_pretrained(final_model_path)
+    feature_extractor = AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-base-960h")
 
-    loaded_model = Wav2Vec2ForCTC.from_pretrained(final_model_path)
-    loaded_processor = Wav2Vec2Processor.from_pretrained(final_model_path)
+    classifier = pipeline("audio-classification", model=model, processor=processor, feature_extractor=feature_extractor)
 
-    inputs = load_audio(audio_path, loaded_processor)
-    forward_pass(loaded_model, inputs)
+    result = classifier(audio_path)
+    print(result)
+
+    # # instantiate model and processor
+    # model = Wav2Vec2ForCTC.from_pretrained(checkpoint_path)
+    # processor = Wav2Vec2Processor.from_pretrained(checkpoint_path)
+
+    # # save model and processor
+    # model.save_pretrained(final_model_path)
+    # processor.save_pretrained(final_model_path)
+
+    # loaded_model = Wav2Vec2ForCTC.from_pretrained(final_model_path)
+    # loaded_processor = Wav2Vec2Processor.from_pretrained(final_model_path)
+
+    # inputs = load_audio(audio_path, loaded_processor)
+    # forward_pass(loaded_model, inputs)
 
 
 
