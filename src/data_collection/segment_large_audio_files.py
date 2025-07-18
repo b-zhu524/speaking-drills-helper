@@ -20,9 +20,9 @@ def segment_audio(input_file, segment_length_ms, output_dir):    # Load the audi
         print(f"Exported {segment_filename}")
 
 
-def load_data():
-    input_dir_clear = "data/raw-long-files/clear"
-    input_dir_unclear = "data/raw-long-files/unclear"
+def load_data_for_training():
+    input_dir_clear = "data/raw-long-files/training/clear"
+    input_dir_unclear = "data/raw-long-files/training/unclear"
 
     for file in os.listdir(input_dir_clear):
         if file.endswith(".wav"):
@@ -34,14 +34,22 @@ def load_data():
             segment_audio(input_file, 5000, "data/raw/unclear-raw")
 
 
+def load_data_for_evaluation(input_dir="data/raw-long-files/testing", output_dir="data/raw/testing"):
+    for file in os.listdir(input_dir):
+        if not file.endswith(".wav"):
+            convert_m4a_to_wav(os.path.join(input_dir, file), os.path.join(input_dir, file.replace(".m4a", ".wav")))
+        input_file = os.path.join(input_dir, file)
+        segment_audio(input_file, 5000, output_dir)
+
+
 def convert_m4a_to_wav(input_file, output_file):
     audio = AudioSegment.from_file(input_file, format="m4a")
     audio.export(output_file, format="wav")
 
 
 def convert_all_files():
-    input_dir_clear = "data/raw-long-files/clear"
-    input_dir_unclear = "data/raw-long-files/unclear"
+    input_dir_clear = "data/raw-long-files/training/clear"
+    input_dir_unclear = "data/raw-long-files/training/unclear"
 
     for file in os.listdir(input_dir_clear):
         if file.endswith(".m4a"):
@@ -56,4 +64,4 @@ def convert_all_files():
 
 if __name__ == "__main__":
     convert_all_files()
-    load_data()
+    load_data_for_training()

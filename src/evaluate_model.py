@@ -1,21 +1,10 @@
 import torch
+import os
 from transformers import Wav2Vec2ForSequenceClassification, Wav2Vec2ForCTC, Wav2Vec2Processor
 from transformers import AutoModel, AutoTokenizer, AutoModelForSequenceClassification, AutoModelForAudioClassification
 import torchaudio
 from transformers import pipeline, AutoFeatureExtractor
-
-
-def load_model_and_processor(model_path, processor_path=None):
-    model = Wav2Vec2ForSequenceClassification.from_pretrained(model_path)
-
-    # Load processor from saved path or from base model if not present
-    if processor_path:
-        processor = Wav2Vec2Processor.from_pretrained(processor_path)
-    else:
-        processor = Wav2Vec2Processor.from_pretrained("facebook/wav2vec2-base-960h")  # Adjust to match base model
-
-    model.eval()
-    return model, processor
+import data_collection.segment_large_audio_files as segmenter
 
 
 def load_audio(audio_path, processor):
@@ -40,8 +29,16 @@ def save_model(model, processor, model_path):
 
 
 def evaluate_model(classifier, audio_path_base):
-    pass
+    """
+    goes through all the files in audio path base and evaluates them — prints {name}: result
+    """
+    segmenter.load_data_for_evaluation()
 
+    for filename in os.listdir(audio_path_base):
+        if filename.endswith(".wav"):
+            audio_path = os.path.join(audio_path_base, filename)
+            result = classifier(audio_path)
+            print(f"{filename}: {result}")
 
 
 if __name__ == "__main__":
@@ -56,7 +53,7 @@ if __name__ == "__main__":
 
     classifier = pipeline("audio-classification", model=model, processor=processor, feature_extractor=feature_extractor)
 
-    result = classifier(audio_path)
-    print(result)
+    evaluate_model(classifier, "data/raw/testing")
+
 
 
