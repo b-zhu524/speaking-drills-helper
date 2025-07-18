@@ -38,10 +38,16 @@ def save_model(model, processor, model_path):
     processor.save_pretrained(model_path)
 
 
+
+def evaluate_model(classifier, audio_path_base):
+    pass
+
+
+
 if __name__ == "__main__":
     checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-686"
     final_model_path = "./models/wav2vec2-base-960h-final"
-    audio_path = "./data/test/segment_7.wav"
+    audio_path = "./data/test/spreading---test---2.wav"
 
     model = AutoModelForAudioClassification.from_pretrained(final_model_path)
     processor = Wav2Vec2Processor.from_pretrained(final_model_path)
@@ -52,20 +58,5 @@ if __name__ == "__main__":
 
     result = classifier(audio_path)
     print(result)
-
-    # # instantiate model and processor
-    # model = Wav2Vec2ForCTC.from_pretrained(checkpoint_path)
-    # processor = Wav2Vec2Processor.from_pretrained(checkpoint_path)
-
-    # # save model and processor
-    # model.save_pretrained(final_model_path)
-    # processor.save_pretrained(final_model_path)
-
-    # loaded_model = Wav2Vec2ForCTC.from_pretrained(final_model_path)
-    # loaded_processor = Wav2Vec2Processor.from_pretrained(final_model_path)
-
-    # inputs = load_audio(audio_path, loaded_processor)
-    # forward_pass(loaded_model, inputs)
-
 
 
