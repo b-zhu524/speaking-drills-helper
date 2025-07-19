@@ -41,10 +41,20 @@ def evaluate_model(classifier, audio_path_base):
             print(f"{filename}: {result}")
 
 
+def save_model(model, processor, checkpoint_path):
+    """
+    Saves the model and processor to the specified path.
+    """
+    os.makedirs(checkpoint_path, exist_ok=True)
+    model.save_pretrained(checkpoint_path)
+    processor.save_pretrained(checkpoint_path)
+    print(f"Model and processor saved to {checkpoint_path}")
+
+
 if __name__ == "__main__":
     checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-686"
     final_model_path = "./models/wav2vec2-base-960h-final"
-    audio_path = "./data/test/spreading---test---2.wav"
+
 
     model = AutoModelForAudioClassification.from_pretrained(final_model_path)
     processor = Wav2Vec2Processor.from_pretrained(final_model_path)
