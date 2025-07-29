@@ -54,16 +54,24 @@ def save_model(model, processor, checkpoint_path):
 if __name__ == "__main__":
     checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-686"
     final_model_path = "./models/wav2vec2-base-960h-final"
+    save_path = "./models/wav2vec2-base-960h-saved"
 
-
+    # save the model
     model = AutoModelForAudioClassification.from_pretrained(final_model_path)
     processor = Wav2Vec2Processor.from_pretrained(final_model_path)
 
-    feature_extractor = AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-base-960h")
+    model.save_pretrained(final_model_path, safe_serialization=False)
 
-    classifier = pipeline("audio-classification", model=model, processor=processor, feature_extractor=feature_extractor)
 
-    evaluate_model(classifier, "data/raw/testing")
+
+    # model = AutoModelForAudioClassification.from_pretrained(final_model_path)
+    # processor = Wav2Vec2Processor.from_pretrained(final_model_path)
+
+    # feature_extractor = AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-base-960h")
+
+    # classifier = pipeline("audio-classification", model=model, processor=processor, feature_extractor=feature_extractor)
+
+    # evaluate_model(classifier, "data/raw/testing")
 
 
 
