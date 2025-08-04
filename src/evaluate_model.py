@@ -53,26 +53,27 @@ def save_model(model, processor, checkpoint_path):
 
 
 if __name__ == "__main__":
-    checkpoint_path = "./models/wav2vec2-base-960h/checkpoint-686"
-    final_model_path = "./models/wav2vec2-base-960h-final"
-    save_path = "./models/wav2vec2-base-960h-savedfinal"
+    checkpoint_path = "./models/wav2vec2-base-960h-new-f1/checkpoint-686"
+    final_model_path = "./models/wav2vec2-base-960h-f1-final"
+    save_path = "./models/wav2vec2-base-960h-f1-savedfinal"
 
     # save the model
     model = AutoModelForAudioClassification.from_pretrained(checkpoint_path)
-    processor = Wav2Vec2Processor.from_pretrained(checkpoint_path)
+    # processor = Wav2Vec2Processor.from_pretrained(checkpoint_path)
+    feature_extractor = AutoFeatureExtractor.from_pretrained(checkpoint_path)
 
-    model.save_pretrained(save_path)
-    processor.save_pretrained(save_path)
+    # model.save_pretrained(save_path, from_pt=True)
+    # processor.save_pretrained(save_path)
 
-    print("done saving")
+    # print("done saving")
 
 
-    model = AutoModelForAudioClassification.from_pretrained(save_path)
-    processor = Wav2Vec2Processor.from_pretrained(save_path)
+    # model = AutoModelForAudioClassification.from_pretrained(save_path)
+    # processor = Wav2Vec2Processor.from_pretrained(save_path)
 
-    feature_extractor = AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-base-960h")
+    # feature_extractor = AutoFeatureExtractor.from_pretrained("facebook/wav2vec2-base-960h")
 
-    classifier = pipeline("audio-classification", model=model, processor=processor, feature_extractor=feature_extractor)
+    classifier = pipeline("audio-classification", model=model, feature_extractor=feature_extractor)
 
     evaluate_model(classifier, "data/raw/testing")
 

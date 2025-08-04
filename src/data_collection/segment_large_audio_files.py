@@ -14,7 +14,8 @@ def segment_audio(input_file, segment_length_ms, output_dir):    # Load the audi
         segment = audio[i:i + segment_length_ms]
 
         segment_number = file_count = len([name for name in os.listdir(output_dir) if os.path.isfile(os.path.join(output_dir, name))]) if os.path.exists(output_dir) else 0
-        segment_filename = os.path.join(output_dir, f"segment_{segment_number}.wav")
+        file_name = os.path.basename(input_file)
+        segment_filename = os.path.join(output_dir, f"segment_{segment_number}-{file_name}.wav")
 
         segment.export(segment_filename, format="wav")
         print(f"Exported {segment_filename}")
