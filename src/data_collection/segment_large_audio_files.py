@@ -37,10 +37,13 @@ def load_data_for_training():
 
 def load_data_for_evaluation(input_dir="data/raw-long-files/testing", output_dir="data/raw/testing"):
     for file in os.listdir(input_dir):
+        file_path = os.path.join(input_dir, file)
+        if os.path.isdir(file_path):
+            continue
+
         if not file.endswith(".wav"):
             convert_m4a_to_wav(os.path.join(input_dir, file), os.path.join(input_dir, file.replace(".m4a", ".wav")))
-        input_file = os.path.join(input_dir, file)
-        segment_audio(input_file, 5000, output_dir)
+        segment_audio(file_path, 5000, output_dir)
 
 
 def convert_m4a_to_wav(input_file, output_file):
