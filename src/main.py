@@ -15,7 +15,7 @@ def create_and_save_dataset():
     
 def train_model():
     # get dataset
-    #dataset = process_dataset.create_dataset("data/raw/", model_id=model_id)
+    dataset = process_dataset.create_dataset("data/raw/", model_id=model_id)
     dataset = load_from_disk(dataset_dir)
 
     # train model

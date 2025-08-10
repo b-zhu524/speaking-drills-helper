@@ -1,5 +1,6 @@
 from pydub import AudioSegment
 import os
+import torchaudio
 
 
 def segment_audio(input_file, segment_length_ms, output_dir):    # Load the audio file
@@ -21,21 +22,9 @@ def segment_audio(input_file, segment_length_ms, output_dir):    # Load the audi
         print(f"Exported {segment_filename}")
 
 
-def load_data_for_training():
-    input_dir_clear = "data/raw-long-files/training/clear"
-    input_dir_unclear = "data/raw-long-files/training/unclear"
+def load_data(input_dir, output_dir):
+    MIN_DURATION = 5    # 5 seconds
 
-    for file in os.listdir(input_dir_clear):
-        if file.endswith(".wav"):
-            input_file = os.path.join(input_dir_clear, file)
-            segment_audio(input_file, 5000, "data/raw/clear-raw")
-    for file in os.listdir(input_dir_unclear):
-        if file.endswith(".wav"):
-            input_file = os.path.join(input_dir_unclear, file)
-            segment_audio(input_file, 5000, "data/raw/unclear-raw")
-
-
-def load_data_for_evaluation(input_dir="data/raw-long-files/testing", output_dir="data/raw/testing"):
     for file in os.listdir(input_dir):
         file_path = os.path.join(input_dir, file)
         if os.path.isdir(file_path):
@@ -43,8 +32,20 @@ def load_data_for_evaluation(input_dir="data/raw-long-files/testing", output_dir
 
         if not file.endswith(".wav"):
             convert_m4a_to_wav(os.path.join(input_dir, file), os.path.join(input_dir, file.replace(".m4a", ".wav")))
-        segment_audio(file_path, 5000, output_dir)
+                # Check duration before segmenting
+        try:
+            info = torchaudio.info(file_path)
+            duration_sec = info.num_frames / info.sample_rate
+            if duration_sec < MIN_DURATION:
+                print(f"Skipping {file} — too short ({duration_sec:.2f} sec)")
+                continue
+        except Exception as e:
+            print(f"Error reading {file}: {e}")
+            continue
 
+
+        segment_audio(file_path, 5000, output_dir)
+ 
 
 def convert_m4a_to_wav(input_file, output_file):
     audio = AudioSegment.from_file(input_file, format="m4a")
@@ -67,5 +68,6 @@ def convert_all_files():
 
 
 if __name__ == "__main__":
-    convert_all_files()
-    load_data_for_training()
+    load_data("../data/raw-long-files/training/clear", "../../data/raw/clear-raw")
+    load_data("../data/raw-long-files/training/unclear", "../../data/raw/unclear-raw")
+
