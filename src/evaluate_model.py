@@ -33,7 +33,7 @@ def evaluate_model(classifier, audio_path_base):
     """
     goes through all the files in audio path base and evaluates them — prints {name}: result
     """
-    segmenter.load_data_for_evaluation()
+    segmenter.load_data("data/raw-long-files/testing/", "data/raw/testing")
 
     for filename in os.listdir(audio_path_base):
         if filename.endswith(".wav"):
@@ -53,9 +53,7 @@ def save_model(model, processor, checkpoint_path):
 
 
 if __name__ == "__main__":
-    checkpoint_path = "./models/wav2vec2-base-960h-new-f1/checkpoint-686"
-    final_model_path = "./models/wav2vec2-base-960h-f1-final"
-    save_path = "./models/wav2vec2-base-960h-f1-savedfinal"
+    checkpoint_path = "./models/wav2vec2-base-960h-myself-only/checkpoint-72"
 
     # save the model
     model = AutoModelForAudioClassification.from_pretrained(checkpoint_path)

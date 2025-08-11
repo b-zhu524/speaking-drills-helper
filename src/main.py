@@ -5,7 +5,7 @@ import numpy as np
 
 model_id = "facebook/wav2vec2-base-960h"
 raw_data_dir = "data/raw/"
-dataset_dir = "data/dataset1"
+dataset_dir = "data/dataset2-myself-only"
 
 def create_and_save_dataset():
     dataset = process_dataset.create_dataset(raw_data_dir, model_id=model_id)
@@ -15,7 +15,7 @@ def create_and_save_dataset():
     
 def train_model():
     # get dataset
-    dataset = process_dataset.create_dataset("data/raw/", model_id=model_id)
+    # dataset = process_dataset.create_dataset("data/raw/", model_id=model_id)
     dataset = load_from_disk(dataset_dir)
 
     # train model
@@ -41,5 +41,5 @@ def train_model():
 
 
 if __name__ == "__main__":
-    #create_and_save_dataset()
+    # create_and_save_dataset()
     train_model()

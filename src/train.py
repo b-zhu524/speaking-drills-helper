@@ -38,7 +38,7 @@ def get_training_args(model_id):
     num_train_epochs = 50
 
     training_args = TrainingArguments(
-        output_dir=f"./models/{model_name}-only-bolang-voice",    # add a new folder
+        output_dir=f"./models/{model_name}-myself-only",    # add a new folder
         eval_strategy="epoch",
         save_strategy="epoch",
         learning_rate=5e-5,

@@ -68,6 +68,6 @@ def convert_all_files():
 
 
 if __name__ == "__main__":
-    load_data("../data/raw-long-files/training/clear", "../../data/raw/clear-raw")
-    load_data("../data/raw-long-files/training/unclear", "../../data/raw/unclear-raw")
+    load_data("data/raw-long-files/training/clear", "data/raw/clear-raw")
+    load_data("data/raw-long-files/training/unclear", "data/raw/unclear-raw")
 
